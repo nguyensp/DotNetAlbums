@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="LyftTopAlbums.MainPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="Most Played Albums">
+
+    <RefreshView IsRefreshing="{Binding IsLoading}" 
+                 Command="{Binding RefreshCommand}">
+        <CollectionView ItemsSource="{Binding Albums}"
+                        BackgroundColor="Transparent">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="15" RowDefinitions="Auto" ColumnDefinitions="100,*">
+                        
+                        <!-- Album Cover -->
+                        <Frame Grid.Column="0" 
+                               HasShadow="True"
+                               Padding="0"
+                               CornerRadius="8"
+                               WidthRequest="100"
+                               HeightRequest="100">
+                            <Image Source="{Binding AlbumCover}"
+                                   Aspect="AspectFill"
+                                   WidthRequest="100"
+                                   HeightRequest="100" />
+                        </Frame>
+
+                        <!-- Album Info -->
+                        <StackLayout Grid.Column="1" 
+                                   Orientation="Vertical" 
+                                   VerticalOptions="Center"
+                                   Margin="15,0,0,0">
+                            <Label Text="{Binding AlbumName}"
+                                   FontSize="16"
+                                   FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light=Black, Dark=White}"
+                                   LineBreakMode="TailTruncation"
+                                   MaxLines="2" />
+                            <Label Text="{Binding AlbumArtist}"
+                                   FontSize="14"
+                                   TextColor="{AppThemeBinding Light=Gray, Dark=LightGray}"
+                                   LineBreakMode="TailTruncation"
+                                   MaxLines="1" />
+                        </StackLayout>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </RefreshView>
+
+</ContentPage>

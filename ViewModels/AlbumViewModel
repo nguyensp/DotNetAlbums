@@ -1,0 +1,70 @@
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using MostPlayedAlbums.Models;
+using MostPlayedAlbums.Services;
+
+namespace MostPlayedAlbums.ViewModels
+{
+    public class AlbumViewModel : INotifyPropertyChanged
+    {
+        private readonly AlbumNetworkService _albumNetworkService;
+        private bool _isLoading;
+
+        public ObservableCollection<Album> Albums { get; set; } = new ObservableCollection<Album>();
+
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set
+            {
+                _isLoading = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public AlbumViewModel(AlbumNetworkService albumNetworkService)
+        {
+            _albumNetworkService = albumNetworkService;
+        }
+
+        public async Task FetchAlbumsAsync()
+        {
+            if (IsLoading)
+                return;
+
+            IsLoading = true;
+
+            try
+            {
+                var albums = await _albumNetworkService.GetAlbumsAsync();
+                
+                // Clear and add albums on the UI thread
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                {
+                    Albums.Clear();
+                    foreach (var album in albums)
+                    {
+                        Albums.Add(album);
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                // Log error or handle it appropriately
+                System.Diagnostics.Debug.WriteLine($"Error fetching albums: {ex.Message}");
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}

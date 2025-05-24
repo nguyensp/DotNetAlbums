@@ -1,0 +1,36 @@
+namespace MostPlayedAlbums.Services
+{
+    public static class RequestBuilder
+    {
+        public static HttpRequestMessage CreateRequest(
+            string url,
+            HttpMethod method,
+            Dictionary<string, string>? headers = null,
+            HttpContent? content = null)
+        {
+            var request = new HttpRequestMessage(method, url);
+            
+            if (headers != null)
+            {
+                foreach (var header in headers)
+                {
+                    request.Headers.Add(header.Key, header.Value);
+                }
+            }
+            
+            if (content != null)
+            {
+                request.Content = content;
+            }
+            
+            return request;
+        }
+
+        public static HttpRequestMessage CreateGetRequest(
+            string url,
+            Dictionary<string, string>? headers = null)
+        {
+            return CreateRequest(url, HttpMethod.Get, headers);
+        }
+    }
+}

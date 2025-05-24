@@ -1,0 +1,7 @@
+namespace MostPlayedAlbums.Services
+{
+    public interface IRequestDispatcher
+    {
+        Task<string> DispatchAsync(HttpRequestMessage request);
+    }
+}

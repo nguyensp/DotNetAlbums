@@ -1,0 +1,37 @@
+using System.Text.Json;
+using MostPlayedAlbums.Models;
+
+namespace MostPlayedAlbums.Services
+{
+    public class AlbumNetworkService
+    {
+        private readonly IRequestDispatcher _requestDispatcher;
+        private const string BaseUrl = "https://rss.applemarketingtools.com/api/v2/us/music/most-played/100/albums.json";
+
+        public AlbumNetworkService(IRequestDispatcher requestDispatcher)
+        {
+            _requestDispatcher = requestDispatcher;
+        }
+
+        public async Task<List<Album>> GetAlbumsAsync()
+        {
+            try
+            {
+                var request = RequestBuilder.CreateGetRequest(BaseUrl);
+                var jsonResponse = await _requestDispatcher.DispatchAsync(request);
+                
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+                
+                var albumResponse = JsonSerializer.Deserialize<AlbumResponse>(jsonResponse, options);
+                return albumResponse?.Feed?.Results ?? new List<Album>();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to fetch albums: {ex.Message}", ex);
+            }
+        }
+    }
+}
